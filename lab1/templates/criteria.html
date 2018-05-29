@@ -1,0 +1,17 @@
+<p>
+<h4>Select main criteria</h4>
+<form action="/criteria" method="POST">
+    {% for c in criteria_list %}
+        <input type="radio" name="main_criteria" value="{{ c.criterion.id }}">{{ c.criterion.name }}
+        <select>
+            {% for mark in c.mark_list %}
+                <option name="{{ c.criterion.id }}_{{ mark.id }}">{{ mark.label }}</option>
+            {% endfor %}
+        </select>
+
+        Optimality: {{ c.criterion.optimality_type }}
+        <br/>
+    {% endfor %}
+    <input type="submit" value="Submit"/>
+</form>
+</p>
