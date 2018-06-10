@@ -70,12 +70,11 @@ class Mark(models.Model):
 
 
 class Result(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    lpr = models.ForeignKey(Lpr, models.DO_NOTHING)
-    alt = models.ForeignKey(Alternative, models.DO_NOTHING)
-    range = models.PositiveIntegerField()
-
-    alt_weight = models.DecimalField(max_digits=10, decimal_places=2)
+    id = models.BigAutoField(primary_key=True, editable=False)
+    lpr = models.ForeignKey(Lpr, models.DO_NOTHING, editable=False)
+    alt = models.ForeignKey(Alternative, models.DO_NOTHING, editable=False)
+    range = models.PositiveIntegerField(editable=False)
+    alt_weight = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
 
     class Meta:
         db_table = 'result'

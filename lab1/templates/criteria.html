@@ -1,17 +1,37 @@
-<p>
+<p xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <h4>Select main criteria</h4>
-<form action="/criteria" method="POST">
-    {% for c in criteria_list %}
-        <input type="radio" name="main_criteria" value="{{ c.criterion.id }}">{{ c.criterion.name }}
-        <select>
-            {% for mark in c.mark_list %}
-                <option name="{{ c.criterion.id }}_{{ mark.id }}">{{ mark.label }}</option>
-            {% endfor %}
-        </select>
+<form action="" method="POST">{% csrf_token %}
+    <select name="lpr_id">
+        {% for lpr in select_criteria_model.lpr_list %}
+            <option value="{{ lpr.id }}">{{ lpr.name }}</option>
+        {% endfor %}
+    </select>
+    </br>
+    </br>
 
-        Optimality: {{ c.criterion.optimality_type }}
-        <br/>
-    {% endfor %}
+    <table>
+        {% for c in select_criteria_model.criteria_list %}
+            <tr>
+                <td>
+                    {{ c.crit1.name }}
+                </td>
+                <td>
+                    <select name="{{ c.crit1.id }}_{{ c.crit2.id }}_sign">
+                        <option>></option>
+                        <option>=</option>
+                        <option><</option>
+                    </select>
+                </td>
+                <td>
+                    Times: <input type="number" name="{{ c.crit1.id }}_{{ c.crit2.id }}_times" min="1" max="5"/>
+                </td>
+                <td>
+                    {{ c.crit2.name }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    </br>
     <input type="submit" value="Submit"/>
 </form>
 </p>

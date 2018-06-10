@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Alternative
+from .models import Alternative, Result
 from .models import Criterion
 from .models import Lpr
 from .models import Mark
@@ -11,3 +11,4 @@ admin.site.register(Criterion)
 admin.site.register(Mark)
 admin.site.register(Vector)
 admin.site.register(Lpr)
+admin.site.register(Result)
