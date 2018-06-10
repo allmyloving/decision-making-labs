@@ -1,15 +1,21 @@
 from django.shortcuts import render
 
+from lab1.decision_making import CritToCritModel
+from lab1.decision_making import get_criteria_weights
 from .models import Criterion, Lpr
-# import the logging library
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 def get_times(request, key):
-    return next(request.POST[x] for x in request.POST if key[:3] + '_times' in x)
+    times = next(request.POST[x] for x in request.POST if key[:3] + '_times' in x)
+    if times == '':
+        times = 1
+    return int(times)
+
+
+class CriteriaToWeightModel:
+    def __init__(self, crit_id, coef):
+        self.criteria = Criterion.objects.get(pk=int(crit_id))
+        self.coefficient = coef
 
 
 def process_form(request):
@@ -17,33 +23,10 @@ def process_form(request):
     for key in request.POST:
         if '_sign' in key:
             models.append(CritToCritModel(key[0], key[2], request.POST[key], get_times(request, key)))
-    return render(request, 'weight.html', {'models': models})
+    weights = get_criteria_weights(models, len(Criterion.objects.all()))
+    return render(request, 'weight.html',
+                  {'models': [CriteriaToWeightModel(k, v) for k, v in weights.items()]})
 
-
-class CritToCritModel:
-    def __init__(self, crit1, crit2, sign, times):
-        self.crit1_id = crit1
-        self.crit2_id = crit2
-        self.sign = sign
-        self.times = times
-
-
-# 1 2 > 2
-# 2 3 = 1
-
-# 1 = z
-# 2 = z/2
-# 3 = z/2
-
-# 2_3_times
-# 1_2_times
-# 2_4_sign
-# 3_4_times
-# 3_6_sign
-# 1_6_times
-# 3_4_sign
-# 2_6_sign
-# 4_6_sign
 
 def get_criteria(request):
     if request.method == 'GET':
@@ -63,7 +46,7 @@ class LprModelItem:
 class SelectCriteriaModel:
     def __init__(self, lpr_list, criteria_list):
         self.lpr_list = [LprModelItem(c) for c in lpr_list]
-        self.criteria_list = get_criteria_to_criteria(criteria_list, criteria_list.count())
+        self.criteria_list = get_criteria_to_criteria(criteria_list)
         self.range = range(criteria_list.count())
 
 
@@ -73,9 +56,10 @@ class CriteriaPairModel:
         self.crit2 = crit2
 
 
-def get_criteria_to_criteria(criteria_list, count):
+def get_criteria_to_criteria(criteria_list):
     result = []
-    for i in range(count):
-        for j in range(i + 1, count):
-            result.append(CriteriaPairModel(criteria_list[i], criteria_list[j]))
+    count = criteria_list.count()
+    for i in range(count - 1):
+        result.append(CriteriaPairModel(criteria_list[i], criteria_list[i + 1]))
+    result.append(CriteriaPairModel(criteria_list[count - 1], criteria_list[0]))
     return result
