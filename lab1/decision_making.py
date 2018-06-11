@@ -29,14 +29,16 @@ def get_coeff1(pair, other_coeff):
 
 def get_criteria_weights(crit_to_crit_model, criteria_amount):
     crit_to_coef = {crit_to_crit_model[0].crit1_id: 1.0}
-    print(len(crit_to_crit_model))
 
-    while len(crit_to_coef) < criteria_amount:
+    processed_elem = 0
+    while processed_elem < criteria_amount:
         for pair in crit_to_crit_model:
             if pair.crit1_id in crit_to_coef:
                 crit_to_coef[pair.crit2_id] = get_coeff(pair, crit_to_coef[pair.crit1_id])
+                processed_elem += 1
             elif pair.crit2_id in crit_to_coef:
                 crit_to_coef[pair.crit1_id] = get_coeff1(pair, crit_to_coef[pair.crit2_id])
+                processed_elem += 1
     total_coef = sum(crit_to_coef.values())
     coef = 1.0 / total_coef
     weights = {}

@@ -1,0 +1,70 @@
+Vector description (with norm marks)
+<table border="1">
+    <tr>
+        <th></th>
+        {% for crit in vector.criteria_list %}
+            <th>
+                {{ crit.name }} <br/>weight = {{ crit.weight }}
+            </th>
+        {% endfor %}
+    </tr>
+    {% for alternative in vector.alternatives %}
+        <tr>
+            <td>
+                {{ alternative.alt.description }}
+            </td>
+
+            {% for mark in alternative.marks %}
+                <td>{{ mark }}</td>
+            {% endfor %}
+
+        </tr>
+    {% endfor %}
+
+
+</table>
+<br/>
+<h3>Agreement matrix</h3>
+<table border="1">
+    {% for index in indexes %}
+        <tr>
+            <td>
+                {{ index.alt.description }}
+            </td>
+            {% for rel in index.relations %}
+                <td>
+                    {{ rel.alt.description }} = {{ rel.index }}
+                </td>
+            {% endfor %}
+            <td>
+                {{ index.min }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br/><h3>Disagreement matrix</h3>
+<table border="1">
+    {% for index in dis_indexes %}
+        <tr>
+            <td>
+                {{ index.alt.description }}
+            </td>
+            {% for rel in index.relations %}
+                <td>
+                    {{ rel.alt.description }} = {{ rel.index }}
+                </td>
+            {% endfor %}
+            <td>
+                {{ index.max }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br/>
+Best alternatives:
+{% for alternative in best_alternatives %}
+    <b>{{ alternative.description }}</b>
+{% endfor %}
+<br/>
+
+<h3><a href="criteria">Go back</a></h3>

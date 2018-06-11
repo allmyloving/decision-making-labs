@@ -92,3 +92,13 @@ class Vector(models.Model):
         return 'Alternative: ' + self.alt.description \
                + ', criteria: ' + self.mark.crit.name \
                + ', mark: ' + self.mark.name
+
+
+class LprMark(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    criterion = models.ForeignKey(Criterion, models.DO_NOTHING)
+    lpr = models.ForeignKey(Lpr, models.DO_NOTHING)
+    weight = models.DecimalField(max_digits=10, decimal_places=4)
+
+    class Meta:
+        db_table = 'lpr_mark'

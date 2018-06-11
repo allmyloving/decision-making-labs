@@ -354,3 +354,15 @@ INSERT INTO `vector` (`id`, `alt_id`, `mark_id`) VALUES
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+
+-- Dumping structure for table decision_theory_labs.alternative
+CREATE TABLE IF NOT EXISTS `lpr_mark` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `criterion_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `lpr_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `weight` DECIMAL(10,4) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  CONSTRAINT `lpr_mark_criterion` FOREIGN KEY (`criterion_id`) REFERENCES `criterion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `lpr_mark_lpr` FOREIGN KEY (`lpr_id`) REFERENCES `lpr` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
