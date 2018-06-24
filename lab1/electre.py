@@ -66,7 +66,7 @@ def compute_disagreement_index(alt, alt2):
 class AgreementIndexRowRelation:
     def __init__(self, alt, index):
         self.alt = alt
-        self.index = index
+        self.index = round(index, 2)
 
 
 # relations is {'alt_id': 'index'}
@@ -104,10 +104,16 @@ def find_best_alternative(agreement_matrix, disagreement_matrix):
         result = get_same_elements(agree_elem, disagree_elem)
         if result:
             break
-        if not agree_elem:
-            c -= 0.1
-        if not disagree_elem:
-            d += 0.1
+        if not agree_elem or not disagree_elem:
+            if not agree_elem:
+                c -= 0.1
+            if not disagree_elem:
+                d += 0.1
+        else:
+            if not result:
+                c -= 0.1
+                d += 0.1
+
     return result
 
 

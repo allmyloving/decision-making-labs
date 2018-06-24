@@ -6,6 +6,41 @@ from lab1.electre import compute_agreement_matrix, get_crit_weight, compute_disa
 from .models import Criterion, Lpr, LprMark, Vector, Alternative
 
 
+def process_form(request):
+    models = []
+    for key in request.POST:
+        if '_sign' in key:
+            models.append(CritToCritModel(key[0], key[2], request.POST[key], get_times(request, key)))
+    weights = get_criteria_weights(models, len(Criterion.objects.all()))
+    save_results(request.POST['lpr_id'], weights)
+    return render(request, 'weight.html',
+                  {'models': [CriterionToWeightModel(k, v) for k, v in weights.items()]})
+
+
+def get_weights(request):
+    return render(request, 'weight.html',
+                  {'models': [CriterionToWeightModel(a.id, get_crit_weight(a.id)) for a in Criterion.objects.all()]})
+
+
+def get_criteria(request):
+    if request.method == 'GET':
+        return render(request, 'lab2.html',
+                      {'select_criteria_model': SelectCriteriaModel(Lpr.objects.all(),
+                                                                    Criterion.objects.all())})
+    else:
+        return process_form(request)
+
+
+def get_agreement_indices(request):
+    agr_matrix = compute_agreement_matrix()
+    disagr_matrix = compute_disagreement_matrix()
+    return render(request, 'electre_indexes.html', {'indexes': agr_matrix,
+                                                    'dis_indexes': disagr_matrix,
+                                                    'best_alternatives': find_best_alternative(agr_matrix,
+                                                                                               disagr_matrix),
+                                                    'vector': VectorViewItem()})
+
+
 def get_times(request, key):
     times = next(request.POST[x] for x in request.POST if key[:3] + '_times' in x)
     if times == '':
@@ -23,35 +58,6 @@ def save_results(lpr_id, weights):
     lpr = Lpr.objects.get(pk=lpr_id)
     for crit_id, coef in weights.items():
         LprMark.objects.create(lpr=lpr, criterion=Criterion.objects.get(pk=crit_id), weight=coef)
-
-
-def process_form(request):
-    models = []
-    for key in request.POST:
-        if '_sign' in key:
-            models.append(CritToCritModel(key[0], key[2], request.POST[key], get_times(request, key)))
-    weights = get_criteria_weights(models, len(Criterion.objects.all()))
-    save_results(request.POST['lpr_id'], weights)
-    return render(request, 'weight.html',
-                  {'models': [CriterionToWeightModel(k, v) for k, v in weights.items()]})
-
-
-def get_criteria(request):
-    if request.method == 'GET':
-        return render(request, 'criteria.html',
-                      {'select_criteria_model': SelectCriteriaModel(Lpr.objects.all(),
-                                                                    Criterion.objects.all())})
-    else:
-        return process_form(request)
-
-
-def get_agreement_indices(request):
-    agr_matrix = compute_agreement_matrix()
-    disagr_matrix = compute_disagreement_matrix()
-    return render(request, 'electre_indexes.html', {'indexes': agr_matrix,
-                                                    'dis_indexes': disagr_matrix,
-                                                    'best_alternatives': find_best_alternative(agr_matrix, disagr_matrix),
-                                                    'vector': VectorViewItem()})
 
 
 class CriteriaToWeightModel:
