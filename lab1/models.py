@@ -102,3 +102,13 @@ class LprMark(models.Model):
 
     class Meta:
         db_table = 'lpr_mark'
+
+
+class CriterionRange(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    criterion = models.ForeignKey(Criterion, models.DO_NOTHING)
+    lpr = models.ForeignKey(Lpr, models.DO_NOTHING)
+    range = models.PositiveIntegerField()
+
+    class Meta:
+        db_table = 'crit_range'

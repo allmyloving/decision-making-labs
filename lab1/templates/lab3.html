@@ -1,0 +1,47 @@
+<form action="" method="POST">{% csrf_token %}
+    LPR:
+    <select name="lpr_id">
+        {% for lpr in model.lpr_list %}
+            <option value="{{ lpr.id }}">{{ lpr.name }}</option>
+        {% endfor %}
+    </select>
+    </br>
+
+    <h3>Select ranges for criteria ( where 1 is the highest)</h3>
+    {% for c in model.criteria_list %}
+        {{ c.name }}
+        <select name="{{ c.id }}_range">
+            {% for r in model.range %}
+                <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+        </select>
+        </br>
+    {% endfor %}
+
+    <input type="submit" value="Submit"/>
+</form>
+
+Current votes:
+<table border="1">
+    <tr>
+        <th></th>
+        {% for c in model.criteria_list %}
+            <th>{{ c.name }}</th>
+        {% endfor %}
+    </tr>
+    {% for lpr_range in model.lpr_to_range_list %}
+        <tr>
+            <td>
+                {{ lpr_range.name }}
+            </td>
+            {% for value in lpr_range.range %}
+                <td>
+                    {{ value }}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+</br>
+<a href="find_criteria">Find main criteria</a>
