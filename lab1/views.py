@@ -56,6 +56,10 @@ class CriterionToWeightModel:
 
 def save_results(lpr_id, weights):
     lpr = Lpr.objects.get(pk=lpr_id)
+    lpr_marks = LprMark.objects.filter(lpr=lpr)
+    if lpr_marks:
+        print("removing outdated marks...")
+        [c.delete() for c in lpr_marks]
     for crit_id, coef in weights.items():
         LprMark.objects.create(lpr=lpr, criterion=Criterion.objects.get(pk=crit_id), weight=coef)
 
